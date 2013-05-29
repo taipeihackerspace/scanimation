@@ -1,26 +1,43 @@
 <html>
 <head>
+<title>Scanimation</title>
 <style>
 img { 
-  width: 400; height: 400;
   position:absolute;
 } 
-#p11 { clip:rect(0,60,400,0); }
-#p21 { clip:rect(0,120,400,60); }
-#p12 { clip:rect(0,180,400,120); }
-#p22 { clip:rect(0,240,400,180); }
 </style>
 <script>
+var imageWidth = 500;
+var imageHeight = 375;
+var stripWidth = 125;
+var images = [
+  "http://taipeihackerspace.github.io/blogimg/openhouse500.jpg",
+  "http://taipeihackerspace.github.io/blogimg/makergettogether.jpg"
+];
+
 function init() {
-  var img = document.getElementById("p11");
-  img.style
+  curLeft = 0;
+  curRight = stripWidth;
+  for (i = 1; i <= 2; i++) {
+    for (j = 1; j <= 2; j++) {
+      id = "p" + i + "" + j;
+      var img = document.getElementById(id);
+      img.src = images[j-1];
+      img.style.width = imageWidth;
+      img.style.height = imageHeight;
+      // CSS clip property: rect(top, right, bottom, left) 
+      img.style.clip = "rect(0px, "+curRight+"px, "+imageWidth+"px, "+curLeft+"px)";
+      curLeft += stripWidth;
+      curRight += stripWidth;
+    }
+  }
 }
 </script>
 </head>
 <body onload="init()">
-<img id="p11" src="http://static.ddmcdn.com/gif/frog-1.jpg">
-<img id="p12" src="http://static.ddmcdn.com/gif/frog-1.jpg">
-<img id="p21" src="http://upload.wikimedia.org/wikipedia/commons/b/be/Red_eyed_tree_frog_edit2.jpg">
-<img id="p22" src="http://upload.wikimedia.org/wikipedia/commons/b/be/Red_eyed_tree_frog_edit2.jpg">
+<img id="p11" src="">
+<img id="p12" src="">
+<img id="p21" src="">
+<img id="p22" src="">
 </body>
 </html>
