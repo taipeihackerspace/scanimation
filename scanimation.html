@@ -2,42 +2,145 @@
 <head>
 <title>Scanimation</title>
 <style>
-img { 
-  position:absolute;
-} 
+img { position: absolute; }
+body { background-color: black; }
+#controls { position: absolute; right: 0px; }
 </style>
 <script>
-var imageWidth = 500;
-var imageHeight = 375;
-var stripWidth = 125;
-var images = [
-  "http://taipeihackerspace.github.io/blogimg/openhouse500.jpg",
-  "http://taipeihackerspace.github.io/blogimg/makergettogether.jpg"
-];
+var anims = [
+[
+  "img/kai1.jpg",
+  "img/kai2.jpg",
+  "img/kai3.jpg",
+  "img/kai4.jpg",
+  "img/kai5.jpg",
+  "img/kai6.jpg"
+],
+[
+  "img/man1.jpg",
+  "img/man2.jpg",
+  "img/man3.jpg",
+  "img/man4.jpg",
+  "img/man5.jpg",
+  "img/man6.jpg"
+],
 
+[
+  "img/woman1.jpg",
+  "img/woman2.jpg",
+  "img/woman3.jpg",
+  "img/woman4.jpg",
+  "img/woman5.jpg",
+  "img/woman6.jpg",
+  "img/woman7.jpg"
+],
+[
+  "img/num1.png",
+  "img/num2.png",
+  "img/num3.png",
+  "img/num4.png",
+  "img/num5.png",
+  "img/num6.png",
+  "img/num7.png",
+  "img/num8.png",
+  "img/num9.png"
+]
+];
+var animNum = 0;
+var animFrames = anims[animNum++];
+var numAnimFrames = animFrames.length;
+var numStripsPerImage = 10;
+var numStrips = numAnimFrames * numStripsPerImage;
+var minImageWidth = 320;
+var minImageHeight = 240;
+var imageWidth;
+var imageHeight;
+var stripWidth;
+
+var position = 0;
+var ANIM_NEXT = 1;
+var ANIM_PREV = -1;
+function drawFrame(direction, showAll) {
+  var strips = document.images;
+  for (var i = 0; i < strips.length; i++) {
+    if (showAll || (i + position) % numAnimFrames == 0) {
+      document.images[i].style.visibility = "visible";
+    } else {
+      document.images[i].style.visibility = "hidden";
+    }
+  }
+  if (showAll) {
+    position = 0;
+  } else {
+    position -= direction;
+  }
+}
+function eventKeyDown(key, which) {
+  if (key.keyCode == 39) // right arrow
+    drawFrame(ANIM_NEXT);
+  if (key.keyCode == 37) // left arrow
+    drawFrame(ANIM_PREV);
+}
 function init() {
-  curLeft = 0;
-  curRight = stripWidth;
-  for (i = 1; i <= 2; i++) {
-    for (j = 1; j <= 2; j++) {
+  position = 0;
+  var s = document.getElementById("scanimation")
+  numAnimFrames = animFrames.length;
+  numStrips = numAnimFrames * numStripsPerImage;
+  var imagesHTML = "";
+  for (i = 1; i <= numStripsPerImage; i++) {
+    for (j = 1; j <= numAnimFrames; j++) {
+      /* var img = new Image();
+      img.onload = function() { s.appendChild(img); };
+      img.id = "p"+i+""+j;
+      img.src = animFrames[j-1]; */
+      imagesHTML += "<img id=\"p"+i+""+j+"\" src=\""+animFrames[j-1]+"?\">";
+    }
+  }
+  s.innerHTML = imagesHTML;
+  imageWidth = document.images[0].width;
+  imageHeight = document.images[0].height;
+  console.log("width, height = ", document.images[0].width, ", ", document.images[0].height);
+  var scaleUp = 1.2;
+  if (imageWidth > 0) {
+    while (imageWidth < minImageWidth) {
+      console.log("adjusting image width from " + imageWidth + " to " + (imageWidth * scaleUp));
+      imageWidth *= scaleUp;
+      imageHeight *= scaleUp;
+      console.log("adjusted image width to " + imageWidth);
+    }
+  }
+  stripWidth = imageWidth / numStrips;
+  var curLeft = 0;
+  var curRight = stripWidth;
+  for (i = 1; i <= numStripsPerImage; i++) {
+    for (j = 1; j <= numAnimFrames; j++) {
       id = "p" + i + "" + j;
       var img = document.getElementById(id);
-      img.src = images[j-1];
       img.style.width = imageWidth;
       img.style.height = imageHeight;
       // CSS clip property: rect(top, right, bottom, left) 
-      img.style.clip = "rect(0px, "+curRight+"px, "+imageWidth+"px, "+curLeft+"px)";
+      img.style.clip = "rect(0px, "+curRight+"px, "+imageHeight+"px, "+curLeft+"px)";
       curLeft += stripWidth;
       curRight += stripWidth;
     }
   }
 }
+var colorNum = 1;
+var colors = ['black','white','blue'];
+var numStripsChoicesNum = 1;
+var numStripsChoices = [10,20,40,60];
+window.addEventListener('load', init, false);
+window.addEventListener('keydown', eventKeyDown, false);
 </script>
 </head>
-<body onload="init()">
-<img id="p11" src="">
-<img id="p12" src="">
-<img id="p21" src="">
-<img id="p22" src="">
+<body>
+<div id="scanimation"></div>
+<div id="controls">
+<div><button onclick="document.body.style.backgroundColor = colors[colorNum++%colors.length];">Color</button></div>
+<div><button onclick="animFrames = anims[animNum++%anims.length]; init(); setTimeout(init, 1000);">Animation</button></div>
+<div><button onclick="numStripsPerImage = numStripsChoices[numStripsChoicesNum++%numStripsChoices.length]; init()">Strips</button></div>
+<div><button onclick="drawFrame(0, true)">Show</button></div>
+<div><button onclick="init()">Init</button></div>
+</div>
 </body>
 </html>
