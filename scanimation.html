@@ -24,7 +24,6 @@ var anims = [
   "img/man5.jpg",
   "img/man6.jpg"
 ],
-
 [
   "img/woman1.jpg",
   "img/woman2.jpg",
@@ -44,6 +43,14 @@ var anims = [
   "img/num7.png",
   "img/num8.png",
   "img/num9.png"
+],
+[
+  "img/dragon1.png",
+  "img/dragon2.png",
+  "img/dragon3.png",
+  "img/dragon4.png",
+  "img/dragon5.png",
+  "img/dragon6.png"
 ]
 ];
 var animNum = 0;
@@ -73,6 +80,16 @@ function drawFrame(direction, showAll) {
     position = 0;
   } else {
     position -= direction;
+  }
+}
+function drawGrid() {
+  var strips = document.images;
+  for (var i = 0; i < strips.length; i++) {
+    if (i % numAnimFrames == 0) {
+      document.images[i].style.visibility = "hidden";
+    } else {
+      document.images[i].src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAAAAACH5BAAAAAAALAAAAAABAAEAAAICTAEAOw=="; // black
+    }
   }
 }
 function eventKeyDown(key, which) {
@@ -140,7 +157,9 @@ window.addEventListener('keydown', eventKeyDown, false);
 <div><button onclick="animFrames = anims[animNum++%anims.length]; init(); setTimeout(init, 1000);">Animation</button></div>
 <div><button onclick="numStripsPerImage = numStripsChoices[numStripsChoicesNum++%numStripsChoices.length]; init()">Strips</button></div>
 <div><button onclick="drawFrame(0, true)">Show</button></div>
+<div><button onclick="drawGrid()">Grid</button></div>
 <div><button onclick="init()">Init</button></div>
 </div>
+<!--<div style="position: absolute; top: 50px; width: 1000; height: 500; background-color: white;"></div>-->
 </body>
 </html>
